@@ -1,0 +1,32 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Déclenche le workflow à chaque push sur la branche main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # Exécute sur un environnement Linux
+
+    steps:
+      - name: Checkout # Clone le dépôt
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js # Configure Node.js (Vite/React en a besoin)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Utilise Node.js version 20 (ou celle que tu préfères, assure-toi qu'elle est compatible avec Vite)
+          cache: 'npm' # Active le cache pour les dépendances npm
+
+      - name: Install dependencies # Installe les dépendances
+        run: npm install
+
+      - name: Build project # Construit le projet (crée le dossier dist)
+        run: npm run build
+
+      - name: Deploy to GitHub Pages # Déploie le contenu du dossier dist
+        uses: peaceiris/actions-gh-pages@v4 # Action tierce pour le déploiement
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # Token d'authentification fourni par GitHub
+          publish_dir: ./dist # Le dossier à déployer
